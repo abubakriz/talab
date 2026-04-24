@@ -21,7 +21,9 @@
     "check": "tsc --noEmit",
     "lint": "biome check . && tsc --noEmit",
     "lint:fix": "biome check --unsafe --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "docs:dev": "cd docs && bun run dev",
+    "docs:build": "cd docs && bun run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.13",

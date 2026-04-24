@@ -1,0 +1,35 @@
+---
+title: Talab
+description: Zero-dependency HTTP client for JavaScript & Typescript with results-based error handling.
+template: splash
+hero:
+  tagline: Zero-dependency HTTP client for JavaScript & Typescript with results-based error handling.
+  actions:
+    - text: Getting Started
+      link: /guides/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/abubakriz/talab
+      icon: external
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why Talab?
+
+<CardGrid>
+	<Card title="No try/catch blocks" icon="error">
+		Network failures and HTTP status **codes** are returned as values, not exceptions.
+	</Card>
+	<Card title="Linear control flow" icon="right-arrow">
+		Reduces nesting and keeps your business logic flat and readable.
+	</Card>
+	<Card title="Type-safe" icon="seti:typescript">
+		Strong TypeScript inference directly on the response object.
+	</Card>
+	<Card title="Zero dependencies" icon="puzzle">
+		A lightweight wrapper around native `fetch` with a tiny footprint (~1kb gzipped).
+	</Card>
+</CardGrid>

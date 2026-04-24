@@ -1,6 +1,9 @@
 # Talab
 
-Talab is an HTTP client for JavaScript and TypeScript. It uses results-based error handling, eliminating the need for `try/catch` blocks around requests.
+Talab is an HTTP client for JavaScript and TypeScript. It uses results-based error handling, eliminating the need for `try/catch` blocks 
+around requests.
+
+<sub>Fun Fact: "Talab" (طلب) is an Arabic word for "request"<sub>
 
 ## Features
 
@@ -118,6 +121,23 @@ const bearerAddon: BearerAddon = (instance) => ({
 const api = talab.create().addon(bearerAddon);
 
 await api.bearer("my-token").get("/protected").json();
+```
+
+### Timeouts and Abort Signals
+
+Talab supports native `AbortSignal` and timeout configurations. You can set a timeout globally on an instance or pass it per-request.
+
+```ts
+// Set a 5-second timeout on the instance
+const api = talab.create({ timeout: 5000 });
+
+// Override with a 1-second timeout for a specific request
+await api.get("/fast", { timeout: 1000 }).json();
+
+// Or use a custom AbortController
+const controller = new AbortController();
+await api.get("/custom", { signal: controller.signal }).json();
+controller.abort();
 ```
 
 ### Custom Fetchers

@@ -1,6 +1,6 @@
 {
   "name": "@abubakriz/talab",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Abu Bakr Iznain",
   "license": "MIT",
   "repository": {
@@ -36,7 +36,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf ./dist && bun build src/index.ts --minify --sourcemap --target=node --outdir=./dist && tsc",
+    "build": "bun build src/index.ts --minify --sourcemap --target=node --outdir=./dist && tsc",
     "build:types": "tsc --emitDeclarationOnly",
     "test": "bun test",
     "check": "tsc --noEmit",

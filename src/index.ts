@@ -1,4 +1,4 @@
-export { talab } from "./talab";
+export { talab } from "./talab.ts";
 
 export type {
   Addon,
@@ -13,4 +13,4 @@ export type {
   TalabInstance,
   TalabOptions,
   TalabResolver,
-} from "./types";
+} from "./types.ts";

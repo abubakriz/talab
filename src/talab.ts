@@ -8,7 +8,7 @@ import type {
   TalabInstance,
   TalabOptions,
   TalabResolver,
-} from "./types";
+} from "./types.ts";
 
 const ok = <T>(data: T, response: Response): Ok<T> => ({
   ok: true,

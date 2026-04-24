@@ -3,20 +3,21 @@
   "version": "1.0.0",
   "description": "Zero-dependency HTTP client for JavaScript & Typescript with results-based error handling.",
   "type": "module",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.ts",
-      "types": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [
-    "src"
+    "dist"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --minify --target=node --outfile=dist/talab.js",
+    "build": "rm -rf ./dist && bun build src/index.ts --minify --sourcemap --target=node --outdir=./dist && tsc",
+    "build:types": "tsc --emitDeclarationOnly",
     "test": "bun test",
     "check": "tsc --noEmit",
     "lint": "biome check . && tsc --noEmit",

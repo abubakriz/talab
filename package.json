@@ -1,6 +1,26 @@
 {
-  "name": "talab",
+  "name": "@abubakriz/talab",
   "version": "1.0.0",
+  "author": "Abu Bakr Iznain",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abubakriz/talab"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "http",
+    "fetch",
+    "request",
+    "typescript",
+    "javascript",
+    "http-client",
+    "web",
+    "browser",
+    "node"
+  ],
   "description": "Zero-dependency HTTP client for JavaScript & Typescript with results-based error handling.",
   "type": "module",
   "main": "./dist/index.js",

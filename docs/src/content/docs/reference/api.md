@@ -20,14 +20,20 @@ The main interface for making requests.
 - **`.request(url, init)`**: Make a request with a custom HTTP method.
 - **`.create(config)`**: Create a new instance inheriting the current configuration.
 - **`.addon(addon)`**: Extend the instance with custom methods.
+- **`.resolver(resolver)`**: Register a resolver addon that extends the resolver object returned by every request. Returns a new instance.
 
-### Response Handlers
+### `TalabResolver`
 
-When making a request (e.g., `talab.get('/path')`), you can choose how to parse the response:
+When making a request (e.g., `talab.get('/path')`), a `TalabResolver` is returned. You can choose how to parse the response:
 
 - **`.json<T>()`**: Parses the response as JSON and returns strongly-typed data.
 - **`.text()`**: Parses the response as plain text.
+- **`.blob()`**: Parses the response as a Blob.
+- **`.arrayBuffer()`**: Parses the response as an ArrayBuffer.
+- **`.formData()`**: Parses the response as FormData.
 - **`.raw()`**: Returns the raw native `Response` object.
+
+Resolver addons can add additional methods to this object (see below).
 
 ### Result Object
 
@@ -59,6 +65,24 @@ If the network request failed (e.g., DNS error, timeout, abort, parse error), th
 }
 ```
 
+## Extension Types
+
+### `Addon<T>`
+
+A function that receives a `TalabInstance` and returns an extended instance with additional methods of type `T`.
+
+```ts
+type Addon<T> = (instance: TalabInstance) => TalabInstance & T;
+```
+
+### `ResolverAddon<T>`
+
+A function that receives a `TalabResolver` and returns an extended resolver with additional methods of type `T`. Resolver addons are applied to every resolver returned by the instance's request methods.
+
+```ts
+type ResolverAddon<T> = (resolver: TalabResolver) => TalabResolver & T;
+```
+
 ## Configuration
 
 When creating an instance with `talab.create(config)`, you can pass the following options:
@@ -67,4 +91,5 @@ When creating an instance with `talab.create(config)`, you can pass the followin
 - **`headers`** (`HeadersInit`): Default headers to include in all requests.
 - **`timeout`** (`number`): The request timeout in milliseconds.
 - **`middlewares`** (`Middleware[]`): An array of middlewares to apply.
+- **`resolvers`** (`ResolverAddon[]`): An array of resolver addons to apply to every resolver.
 - **`fetcher`** (`typeof fetch`): A custom fetch implementation.

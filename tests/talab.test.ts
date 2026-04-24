@@ -1,5 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it, mock } from "bun:test";
-import type { Addon, Middleware, TalabInstance } from "../src";
+import type {
+  Addon,
+  Middleware,
+  ResolverAddon,
+  Result,
+  TalabInstance,
+} from "../src";
 import { talab } from "../src";
 
 let server: ReturnType<typeof Bun.serve>;
@@ -452,5 +458,101 @@ describe("custom fetcher", () => {
     if (!r.ok) return;
     expect(r.data.mocked).toBe(true);
     expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("resolver addons", () => {
+  it("adds custom methods to the resolver", async () => {
+    type StatusResolver = ResolverAddon<{
+      jsonIfOk<T>(): Promise<Result<T>>;
+    }>;
+
+    const statusResolver: StatusResolver = (resolver) => ({
+      ...resolver,
+      async jsonIfOk<T>() {
+        const raw = await resolver.raw();
+        if (!raw.ok) return raw;
+        if (!raw.data.ok) {
+          return {
+            ok: false as const,
+            error: {
+              type: "network" as const,
+              original: new Error(`HTTP ${raw.status}`),
+            },
+          };
+        }
+        try {
+          const data = (await raw.data.json()) as T;
+          return {
+            ok: true as const,
+            data,
+            response: raw.data,
+            status: raw.status,
+          };
+        } catch (e) {
+          return {
+            ok: false as const,
+            error: { type: "parse" as const, original: e },
+          };
+        }
+      },
+    });
+
+    const withStatus = api.resolver(statusResolver);
+
+    // 200 should succeed
+    const r = await withStatus.get("/json").jsonIfOk<{ id: number }>();
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.data.id).toBe(1);
+  });
+
+  it("preserves original resolver methods", async () => {
+    const noop: ResolverAddon<{ noop(): string }> = (resolver) => ({
+      ...resolver,
+      noop: () => "hi",
+    });
+
+    const extended = api.resolver(noop);
+    const r = await extended.get("/json").json<{ id: number }>();
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.data.id).toBe(1);
+  });
+
+  it("composes multiple resolver addons", async () => {
+    const addA: ResolverAddon<{ a(): string }> = (resolver) => ({
+      ...resolver,
+      a: () => "A",
+    });
+
+    const addB: ResolverAddon<{ b(): string }> = (resolver) => ({
+      ...resolver,
+      b: () => "B",
+    });
+
+    const extended = api.resolver(addA).resolver(addB);
+    const resolver = extended.get("/json");
+    expect(resolver.a()).toBe("A");
+    expect(resolver.b()).toBe("B");
+
+    const r = await resolver.json();
+    expect(r.ok).toBe(true);
+  });
+
+  it("child inherits parent resolver addons", async () => {
+    const addTag: ResolverAddon<{ tag(): string }> = (resolver) => ({
+      ...resolver,
+      tag: () => "tagged",
+    });
+
+    const parent = api.resolver(addTag);
+    const child = parent.create({ headers: { "X-Child": "yes" } });
+
+    const resolver = child.get("/json");
+    expect(resolver.tag()).toBe("tagged");
+
+    const r = await resolver.json<{ id: number }>();
+    expect(r.ok).toBe(true);
   });
 });

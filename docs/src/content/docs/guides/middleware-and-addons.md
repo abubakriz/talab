@@ -1,6 +1,6 @@
 ---
-title: Middleware and Addons
-description: Learn how to use middleware and addons to extend the Talab API.
+title: Middleware, Addons, and Resolver Addons
+description: Learn how to use middleware, addons, and resolver addons to extend the Talab API.
 ---
 
 ## Using Middleware
@@ -55,3 +55,83 @@ const api = talab.create().addon(bearerAddon);
 // Use the custom fluent method
 await api.bearer("my-token").get("/protected").json();
 ```
+
+## Using Resolver Addons
+
+While **addons** extend the instance (adding methods like `.bearer()`), **resolver addons** extend the resolver (the object returned by `.get()`, `.post()`, etc. that has `.json()`, `.text()`, and `.raw()` methods).
+
+This is useful when you want to add custom response parsing strategies that apply to every request made by an instance.
+
+### Defining a Resolver Addon
+
+A `ResolverAddon` is a function that receives a `TalabResolver` and returns an extended resolver:
+
+```ts
+import type { ResolverAddon, Result } from "talab";
+
+// A resolver addon that adds `.jsonStrict()`
+type StrictResolver = ResolverAddon<{
+  jsonStrict<T>(): Promise<Result<T>>;
+}>;
+
+const strictResolver: StrictResolver = (resolver) => ({
+  ...resolver,
+  async jsonStrict<T>() {
+    const raw = await resolver.raw();
+    if (!raw.ok) return raw;
+    if (raw.status >= 400) {
+      return {
+        ok: false as const,
+        error: { type: "network" as const, original: new Error(`HTTP ${raw.status}`) },
+      };
+    }
+    const data = (await raw.data.json()) as T;
+    return { ok: true as const, data, response: raw.data, status: raw.status };
+  },
+});
+```
+
+### Applying Resolver Addons
+
+There are two ways to apply resolver addons:
+
+**Using `.resolver()`**
+
+```ts
+const api = talab
+  .create({ base: "https://api.example.com" })
+  .resolver(strictResolver);
+
+// .jsonStrict() is now available on every resolver
+const res = await api.get("/users").jsonStrict<User[]>();
+```
+
+**Using the `resolvers` config option**
+
+> (Not recommended. It will lose type information!)
+
+```ts
+const api = talab.create({
+  base: "https://api.example.com",
+  resolvers: [strictResolver],
+});
+```
+
+### Composition and Inheritance
+
+Resolver addons compose just like middlewares. You can chain multiple `.resolver()` calls, and child instances inherit resolver addons from their parents:
+
+```ts
+const base = talab
+  .create({ base: "https://api.example.com" })
+  .resolver(addTimestamp)
+  .resolver(addStrictJson);
+
+// Child inherits both resolver addons
+const authed = base.create({
+  headers: { Authorization: "Bearer token" },
+});
+
+const res = await authed.get("/data").jsonStrict();
+```
+

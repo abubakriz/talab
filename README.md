@@ -14,6 +14,7 @@ around requests.
 - **Tiny footprint:** ~1kb gzipped.
 - **Middleware support:** Intercept and modify requests and responses.
 - **Addon support:** Extend the `TalabInstance` API with custom fluent methods.
+- **Resolver addons:** Extend the resolver (response handler) with custom parsing methods.
 
 ## Why Talab?
 
@@ -122,6 +123,41 @@ const api = talab.create().addon(bearerAddon);
 
 await api.bearer("my-token").get("/protected").json();
 ```
+
+### Resolver Addons
+
+Resolver addons extend the resolver object (the response handler returned by `.get()`, `.post()`, etc.) with custom parsing methods. While addons extend the *instance*, resolver addons extend the *resolver*.
+
+```ts
+import type { ResolverAddon } from "talab";
+
+// Add a custom `.jsonStrict()` that treats non-2xx as errors
+const strictResolver: ResolverAddon<{
+  jsonStrict<T>(): Promise<Result<T>>;
+}> = (resolver) => ({
+  ...resolver,
+  async jsonStrict<T>() {
+    const raw = await resolver.raw();
+    if (!raw.ok) return raw;
+    if (raw.status >= 400) {
+      return {
+        ok: false as const,
+        error: { type: "network" as const, original: new Error(`HTTP ${raw.status}`) },
+      };
+    }
+    const data = (await raw.data.json()) as T;
+    return { ok: true as const, data, response: raw.data, status: raw.status };
+  },
+});
+
+// Apply via .resolver()
+const api = talab.create({ base: "https://api.example.com" }).resolver(strictResolver);
+
+// Every request now has .jsonStrict() available
+const res = await api.get("/users").jsonStrict<User[]>();
+```
+
+Resolver addons compose and inherit through `.create()`, just like middlewares.
 
 ### Timeouts and Abort Signals
 

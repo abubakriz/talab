@@ -31,7 +31,7 @@ export default defineConfig({
               slug: "guides/instances-and-configuration",
             },
             {
-              label: "Middleware and Addons",
+              label: "Middleware, Addons, and Resolver Addons",
               slug: "guides/middleware-and-addons",
             },
             {

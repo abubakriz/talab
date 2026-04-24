@@ -1,6 +1,7 @@
 import type {
   Err,
   Ok,
+  ResolverAddon,
   Result,
   TalabConfig,
   TalabError,
@@ -125,7 +126,7 @@ function create(cfg: TalabConfig = {}): TalabInstance {
       }
     };
 
-    return {
+    let resolver: TalabResolver = {
       json: <T = any>() => parse<T>((r) => r.json() as Promise<T>),
       text: () => parse((r) => r.text()),
       blob: () => parse((r) => r.blob()),
@@ -133,6 +134,14 @@ function create(cfg: TalabConfig = {}): TalabInstance {
       formData: () => parse((r) => r.formData() as Promise<FormData>),
       raw: execute,
     };
+
+    // Apply resolver addons
+    const resolvers = cfg.resolvers ?? [];
+    for (const addon of resolvers) {
+      resolver = addon(resolver);
+    }
+
+    return resolver;
   }
 
   const instance: TalabInstance = {
@@ -152,8 +161,11 @@ function create(cfg: TalabConfig = {}): TalabInstance {
           ...(cfg.middlewares ?? []),
           ...(newCfg.middlewares ?? []),
         ],
+        resolvers: [...(cfg.resolvers ?? []), ...(newCfg.resolvers ?? [])],
       }),
     addon: (addon) => addon(instance),
+    resolver: <T extends Record<string, any>>(resolver: ResolverAddon<T>) =>
+      instance.create({ resolvers: [resolver] }) as TalabInstance<T>,
     config: cfg,
   };
 

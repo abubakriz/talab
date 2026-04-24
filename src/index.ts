@@ -6,6 +6,7 @@ export type {
   FetchLike,
   Middleware,
   Ok,
+  ResolverAddon,
   Result,
   TalabConfig,
   TalabError,

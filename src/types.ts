@@ -38,6 +38,7 @@ type TalabConfig = {
   headers?: Record<string, string>;
   timeout?: number;
   middlewares?: Middleware[];
+  resolvers?: ResolverAddon<any>[];
   fetcher?: FetchLike;
 };
 
@@ -54,16 +55,24 @@ type Addon<T extends Record<string, any> = Record<string, any>> = (
   instance: TalabInstance,
 ) => TalabInstance & T;
 
-type TalabInstance = {
-  request(url: string, options?: TalabOptions): TalabResolver;
-  get(url: string, options?: TalabOptions): TalabResolver;
-  post(url: string, options?: TalabOptions): TalabResolver;
-  put(url: string, options?: TalabOptions): TalabResolver;
-  patch(url: string, options?: TalabOptions): TalabResolver;
-  delete(url: string, options?: TalabOptions): TalabResolver;
-  head(url: string, options?: TalabOptions): TalabResolver;
-  create(config?: TalabConfig): TalabInstance;
+type ResolverAddon<T extends Record<string, any> = Record<string, any>> = (
+  resolver: TalabResolver,
+) => TalabResolver & T;
+
+// biome-ignore lint/complexity/noBannedTypes: It's used to collapse types in intersections cleanly
+type TalabInstance<R extends Record<string, any> = {}> = {
+  request(url: string, options?: TalabOptions): TalabResolver & R;
+  get(url: string, options?: TalabOptions): TalabResolver & R;
+  post(url: string, options?: TalabOptions): TalabResolver & R;
+  put(url: string, options?: TalabOptions): TalabResolver & R;
+  patch(url: string, options?: TalabOptions): TalabResolver & R;
+  delete(url: string, options?: TalabOptions): TalabResolver & R;
+  head(url: string, options?: TalabOptions): TalabResolver & R;
+  create(config?: TalabConfig): TalabInstance<R>;
   addon<T extends Record<string, any>>(addon: Addon<T>): TalabInstance & T;
+  resolver<T extends Record<string, any>>(
+    resolver: ResolverAddon<T>,
+  ): TalabInstance<R & T>;
   config: Readonly<TalabConfig>;
 };
 
@@ -73,6 +82,7 @@ export type {
   FetchLike,
   Middleware,
   Ok,
+  ResolverAddon,
   Result,
   TalabConfig,
   TalabError,

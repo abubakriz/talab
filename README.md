@@ -1,6 +1,6 @@
 # Talab
 
-Talab is an HTTP client for JavaScript and TypeScript. It uses results-based error handling, eliminating the need for `try/catch` blocks 
+Talab is an HTTP client for JavaScript and TypeScript. It uses result-based error handling, eliminating the need for `try/catch` blocks 
 around requests.
 
 <sub>Fun Fact: "Talab" (طلب) is an Arabic word for "request"<sub>
@@ -45,7 +45,7 @@ async function getPost(id: number) {
 }
 ```
 
-### Using Talab (Results-based)
+### Using Talab (Result-based)
 
 ```ts
 import { talab } from "@abubakriz/talab";

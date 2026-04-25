@@ -21,7 +21,7 @@
     "browser",
     "node"
   ],
-  "description": "Zero-dependency HTTP client for JavaScript & Typescript with results-based error handling.",
+  "description": "Zero-dependency HTTP client for JavaScript & Typescript with result-based error handling.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

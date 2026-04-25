@@ -3,7 +3,7 @@ title: Getting Started
 description: How to install and use Talab.
 ---
 
-Talab is an HTTP client for JavaScript and TypeScript. It uses results-based error handling, eliminating the need for `try/catch` blocks around requests.
+Talab is an HTTP client for JavaScript and TypeScript. It uses result-based error handling, eliminating the need for `try/catch` blocks around requests.
 
 ## Installation
 

@@ -10,7 +10,7 @@ Talab fully supports native `AbortSignal` for cancelling requests, as well as an
 You can configure timeouts globally on an instance or explicitly on a per-request basis. If a request exceeds the timeout, it will be automatically aborted and the result object will contain an `abort` error.
 
 ```ts
-import { talab } from "talab";
+import { talab } from "@abubakriz/talab";
 
 // Set a 5-second global timeout for all requests on this instance
 const api = talab.create({ timeout: 5000 });

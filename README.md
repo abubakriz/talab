@@ -48,7 +48,7 @@ async function getPost(id: number) {
 ### Using Talab (Results-based)
 
 ```ts
-import { talab } from "talab";
+import { talab } from "@abubakriz/talab";
 
 async function getPost(id: number) {
   const res = await talab
@@ -90,7 +90,7 @@ const authed = api.create({
 Middlewares allow you to intercept and modify requests and responses.
 
 ```ts
-import type { Middleware } from "talab";
+import type { Middleware } from "@abubakriz/talab";
 
 const addHeader: Middleware = (next) => (url, init) => {
   const headers = new Headers(init.headers);
@@ -106,7 +106,7 @@ const api = talab.create({ middlewares: [addHeader] });
 Extend the `TalabInstance` API with custom fluent methods.
 
 ```ts
-import type { Addon, TalabInstance } from "talab";
+import type { Addon, TalabInstance } from "@abubakriz/talab";
 
 type BearerAddon = Addon<{ bearer(token: string): TalabInstance }>;
 
@@ -129,7 +129,7 @@ await api.bearer("my-token").get("/protected").json();
 Resolver addons extend the resolver object (the response handler returned by `.get()`, `.post()`, etc.) with custom parsing methods. While addons extend the *instance*, resolver addons extend the *resolver*.
 
 ```ts
-import type { ResolverAddon } from "talab";
+import type { ResolverAddon } from "@abubakriz/talab";
 
 // Add a custom `.jsonStrict()` that treats non-2xx as errors
 const strictResolver: ResolverAddon<{

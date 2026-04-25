@@ -6,7 +6,7 @@ description: Learn how to create isolated instances of Talab with specific defau
 You can create isolated instances of Talab with specific default configurations, such as base URLs and headers. These configurations merge intelligently.
 
 ```ts
-import { talab } from "talab";
+import { talab } from "@abubakriz/talab";
 
 const api = talab.create({
   base: "https://api.example.com",

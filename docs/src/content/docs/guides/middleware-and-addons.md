@@ -8,7 +8,7 @@ description: Learn how to use middleware, addons, and resolver addons to extend 
 Middleware allows you to intercept and modify requests before they are sent, or intercept and modify responses before they are returned to the caller.
 
 ```ts
-import type { Middleware } from "talab";
+import type { Middleware } from "@abubakriz/talab";
 
 // A middleware to inject a header
 const addHeader: Middleware = (next) => (url, init) => {
@@ -37,7 +37,7 @@ Child instances inherit middlewares from their parent instances. They execute in
 You can extend the `TalabInstance` API with custom fluent methods using Addons. This is useful for building domain-specific SDKs.
 
 ```ts
-import type { Addon, TalabInstance } from "talab";
+import type { Addon, TalabInstance } from "@abubakriz/talab";
 
 type BearerAddon = Addon<{ bearer(token: string): TalabInstance }>;
 
@@ -67,7 +67,7 @@ This is useful when you want to add custom response parsing strategies that appl
 A `ResolverAddon` is a function that receives a `TalabResolver` and returns an extended resolver:
 
 ```ts
-import type { ResolverAddon, Result } from "talab";
+import type { ResolverAddon, Result } from "@abubakriz/talab";
 
 // A resolver addon that adds `.jsonStrict()`
 type StrictResolver = ResolverAddon<{

@@ -10,13 +10,13 @@ Talab is an HTTP client for JavaScript and TypeScript. It uses results-based err
 You can install Talab using your preferred package manager:
 
 ```bash
-npm install talab
+npm install @abubakriz/talab
 # or
-yarn add talab
+yarn add @abubakriz/talab
 # or
-pnpm add talab
+pnpm add @abubakriz/talab
 # or
-bun add talab
+bun add @abubakriz/talab
 ```
 
 ## Basic Usage
@@ -24,7 +24,7 @@ bun add talab
 With Talab, you don't need to wrap your requests in `try/catch` blocks to handle errors. Network failures and 4xx/5xx status codes are returned as part of the result object.
 
 ```ts
-import { talab } from "talab";
+import { talab } from "@abubakriz/talab";
 
 async function getPost(id: number) {
   const res = await talab
